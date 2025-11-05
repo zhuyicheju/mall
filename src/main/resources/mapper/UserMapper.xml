@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mall.mapper.UserMapper">
+
+    <select id="getUserByName" resultType="User">
+        SELECT id, username, password, nickname, phone, status, create_time, last_login_time
+        FROM user
+        WHERE username = #{username};
+    </select>
+
+    <insert id="addUser" parameterType="User">
+        INSERT INTO user
+        VALUES (#{username}, #{password}, #{nickname}, #{phone}, #{status}, #{create_time}, #{last_login_time})
+    </insert>
+
+    <update id="updateUserById" parameterType="User">
+        UPDATE user
+        SET
+        username = #{username},
+        password = #{password},
+        nickname = #{nickname},
+        phone = #{phone},
+        status = #{status},
+        create_time = #{create_time},
+        last_login_time = #{last_login_time}
+        WHERE id = #{id}
+    </update>
+
+</mapper>
