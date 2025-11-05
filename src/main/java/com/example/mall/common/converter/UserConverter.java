@@ -2,14 +2,18 @@ package com.example.mall.common.converter;
 
 import java.time.LocalDateTime;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.example.mall.controller.UserRegisterDTO;
 import com.example.mall.entity.User;
+
+import jakarta.annotation.Resource;
 
 public class UserConverter {
     /**
      * 将UserRegisterDTO转换为User实体
      */
-    public static User convert(UserRegisterDTO dto) {
+    public static User convert(UserRegisterDTO dto, PasswordEncoder passwordEncoder) {
         if (dto == null) {
             return null;
         }
@@ -17,7 +21,7 @@ public class UserConverter {
         User user = new User();
         // 映射DTO中已有的字段（字段名一致，直接赋值）
         user.setUsername(dto.getUsername());
-        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setNickname(dto.getNickname());
         user.setPhone(dto.getPhone());
 

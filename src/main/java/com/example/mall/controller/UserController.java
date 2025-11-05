@@ -29,4 +29,13 @@ public class UserController {
         return ApiResponse.success(HttpResultCode.OK, result);
     }
 
+    @PostMapping("/login")
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody UserLoginDTO userLoginDTO){
+        try{
+            LoginResponse loginResponse = userService.login(userLoginDTO);
+            return ApiResponse.success(HttpResultCode.OK, loginResponse);
+        }catch(Exception e){
+            return ApiResponse.error(HttpResultCode.BAD_REQUEST, null);
+        }
+    }
 }
