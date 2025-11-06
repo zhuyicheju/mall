@@ -1,10 +1,7 @@
--- 创建数据库（如果需要）
 CREATE DATABASE IF NOT EXISTS myself_mall;
 
--- 使用该数据库
 USE myself_mall;
 
--- 创建用户表（修正语法错误）
 CREATE TABLE `user` (
     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户唯一标识',
     `username` varchar(50) NOT NULL COMMENT '登录名',
