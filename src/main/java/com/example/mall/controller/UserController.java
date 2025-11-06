@@ -12,9 +12,11 @@ import com.example.mall.service.Authenticated;
 
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class UserController {
 
     @Resource
@@ -22,6 +24,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ApiResponse<RegisterResultEnum> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO){
+        log.info("Receive message");
         RegisterResultEnum result = userService.register(userRegisterDTO);
         if(result != RegisterResultEnum.SUCCESS){
             return ApiResponse.error(HttpResultCode.BAD_REQUEST, result);

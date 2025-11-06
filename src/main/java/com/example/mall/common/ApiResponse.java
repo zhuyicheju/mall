@@ -16,19 +16,19 @@ public class ApiResponse<T> {
     private T data;
 
     public static <T> ApiResponse<T> success(HttpResultCode rc, T data) {
-        return new ApiResponse<>(rc.getHttpCode(), rc.getMessage(), data);
+        return new ApiResponse<T>(rc.getHttpCode(), rc.getMessage(), data);
     }
 
     public static ApiResponse<Void> success(HttpResultCode rc) {
-        return new ApiResponse<>(rc.getHttpCode(), rc.getMessage(), null);
+        return new ApiResponse<Void>(rc.getHttpCode(), rc.getMessage(), null);
     }
 
     public static <T> ApiResponse<T> error(HttpResultCode rc, T data) {
-        return new ApiResponse<>(rc.getHttpCode(), rc.getMessage(), data);
+        return new ApiResponse<T>(rc.getHttpCode(), rc.getMessage(), data);
     }
 
     public static ApiResponse<Void> error(HttpResultCode rc) {
-        return new ApiResponse<>(rc.getHttpCode(), rc.getMessage(), null);
+        return new ApiResponse<Void>(rc.getHttpCode(), rc.getMessage(), null);
     }
 }
 
