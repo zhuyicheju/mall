@@ -13,15 +13,14 @@ import com.example.mall.controller.UserLoginDTO;
 import com.example.mall.controller.UserRegisterDTO;
 import com.example.mall.entity.User;
 import com.example.mall.mapper.UserMapper;
-import com.example.mall.service.Authenticated;
-import com.example.mall.common.MallException;
+import com.example.mall.service.UserService;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class UserService implements Authenticated {
+public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;

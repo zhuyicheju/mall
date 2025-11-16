@@ -1,5 +1,6 @@
 package com.example.mall.controller;
 
+import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.mall.common.ApiResponse;
 import com.example.mall.common.enums.HttpResultCode;
 import com.example.mall.common.enums.RegisterResultEnum;
-import com.example.mall.service.Authenticated;
+import com.example.mall.service.UserService;
 
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
     @Resource
-    Authenticated userService;
+    UserService userService;
 
     @PostMapping("/register")
     public ApiResponse<RegisterResultEnum> register(@Valid @RequestBody UserRegisterDTO userRegisterDTO){

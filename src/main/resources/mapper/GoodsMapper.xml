@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mall.mapper.GoodsMapper">
+    <select id="getGoodsWithPage" resultType="Good">
+        SELECT id, name, price, image_url 
+        FROM goods
+        WHERE state = 1 AND stock > 0
+        ORDER BY price
+        LIMIT #{offset}, #{pagesize}
+    </select>
+
+    <select id="goodCount" resultType="Long">
+        SELECT COUNT(*) FROM goods
+    </select>
+
+    <select id="getGoodById" resultType="Good">
+        SELECT id, name, title, price, stock, description, image_url, create_time, update_time
+        FROM goods
+        WHERE id = #{id};
+    </select>
+
+    <update id="updateGood">
+        UPDATE goods
+        SET stock = #{stock}
+        WHERE id = #{id};
+    </update>
+
+    <insert id="insertGood" parameterType="com.example.mall.controller.dto.GoodInsertDTO">
+        INSERT INTO `goods`(
+            name, title, price, stock, description, image_url, create_time, update_time
+        ) VALUES (
+            #{name}, #{title}, #{price}, #{stock}, #{description}, #{image_url}, #{create_time}, #{update_time}
+        )
+    </insert> 
+</mapper>

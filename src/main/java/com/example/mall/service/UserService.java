@@ -6,7 +6,7 @@ import com.example.mall.controller.UserLoginDTO;
 import com.example.mall.controller.UserRegisterDTO;
 import com.example.mall.entity.User;
 
-public interface Authenticated {
+public interface UserService {
     public RegisterResultEnum register(UserRegisterDTO userDTO);
     public LoginResponse login(UserLoginDTO userLoginDTO);
 }
