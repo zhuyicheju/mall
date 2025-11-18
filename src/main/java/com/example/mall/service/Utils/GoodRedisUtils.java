@@ -62,12 +62,16 @@ public class GoodRedisUtils {
         redisUtils.set(key, goodDetailDTO, DETAIL_EXPIRE_TIME + randomTime(), TimeUnit.SECONDS);
     }
 
-    public void setList(int page, int pagesize, Object pageResult){
+    public void setList(int page, int pagesize, PageResponse<GoodSimpleDTO> pageResult){
         String key = buildGoodListKey(page, pagesize);
-        redisUtils.set(key, pageResult, LIST_EXPIRE_TIME + randomTime(), TimeUnit.SECONDS);
+        int expireTime = LIST_EXPIRE_TIME;
+        if (pageResult.getData() == null){
+           expireTime = NULL_EXPIRE_TIME;
+        } 
+        redisUtils.set(key, pageResult, expireTime + randomTime(), TimeUnit.SECONDS);
     }
 
-    public GoodDetailDTO geDetail(Long id){
+    public GoodDetailDTO getDetail(Long id){
         String key = buildGoodDetailKey(id);
         GoodDetailDTO goodDetailDTO = (GoodDetailDTO) redisUtils.get(key);
         return goodDetailDTO;
