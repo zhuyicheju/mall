@@ -3,8 +3,8 @@ package com.example.mall.service.impl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.mall.common.JwtUtils;
 import com.example.mall.common.MallException;
+import com.example.mall.common.Utils.JwtUtils;
 import com.example.mall.common.converter.UserConverter;
 import com.example.mall.common.enums.HttpResultCode;
 import com.example.mall.common.enums.RegisterResultEnum;

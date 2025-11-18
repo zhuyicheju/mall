@@ -1,4 +1,4 @@
-package com.example.mall.common;
+package com.example.mall.common.Utils;
 
 import java.util.Date;
 
