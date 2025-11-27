@@ -34,6 +34,7 @@ public class GoodRedisUtils {
     private final static String ID = "id=";
     private final static String PAGE = "page=";
     private final static String PAGESIZE = "pagesize=";
+    private final static String REDIS_NULL = "NULL";
 
     private final static int DETAIL_EXPIRE_TIME = 3600;
     private final static int LIST_EXPIRE_TIME = 600;
@@ -57,7 +58,7 @@ public class GoodRedisUtils {
     public void setDetail(Long id, GoodDetailDTO goodDetailDTO){
         String key = buildGoodDetailKey(id);
         if (goodDetailDTO == null){
-            redisUtils.set(key, goodDetailDTO, NULL_EXPIRE_TIME + randomTime(), TimeUnit.SECONDS);
+            redisUtils.set(key, REDIS_NULL, NULL_EXPIRE_TIME + randomTime(), TimeUnit.SECONDS);
         }
         redisUtils.set(key, goodDetailDTO, DETAIL_EXPIRE_TIME + randomTime(), TimeUnit.SECONDS);
     }

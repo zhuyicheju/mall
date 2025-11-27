@@ -23,7 +23,7 @@ public class GoodController {
     @Resource
     GoodService goodService;
 
-    @GetMapping("list")
+    @GetMapping("/list")
     public ApiResponse<PageResponse<GoodSimpleDTO>> getGoodsList(PageQuery pageQuery){
         return ApiResponse.success(HttpResultCode.OK, goodService.getGoodsList(pageQuery));
     }

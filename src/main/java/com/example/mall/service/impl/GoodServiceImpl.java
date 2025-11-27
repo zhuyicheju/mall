@@ -44,12 +44,19 @@ public class GoodServiceImpl implements GoodService {
         
         List<GoodSimpleDTO> goods = goodsMapper.getGoodsWithPage(offset, limit);
         Long count = goodsMapper.goodCount();
-        PageResponse<GoodSimpleDTO> pageResponse = new PageResponse<GoodSimpleDTO>(goods, count, limit, offset, limit);
-        
+        int totalPages = (int) (count + pagesize - 1) / pagesize;
+        PageResponse<GoodSimpleDTO> pageResponse = new PageResponse<>(
+            goods, 
+            count, 
+            totalPages, 
+            pagesize, 
+            page
+        );
         goodRedisUtils.setList(page, pagesize, pageResponse);
         
         return pageResponse;
     }
+    
     public GoodDetailDTO getGoodDetail(Long id){
         Object cacheValue = goodRedisUtils.getDetail(id);
 

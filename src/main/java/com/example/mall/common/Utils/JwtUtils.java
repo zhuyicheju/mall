@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtils {
-    private static final String SECRET_KEY = "123456";
+    private static final String SECRET_KEY = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6";
     private static final long EXPIRATION = 1000 * 60 * 60 * 24;
 
     public String generateToken(String username){
