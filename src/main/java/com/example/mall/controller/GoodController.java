@@ -15,7 +15,9 @@ import com.example.mall.controller.dto.GoodSimpleDTO;
 import com.example.mall.service.GoodService;
 
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/good")
 public class GoodController {
@@ -25,12 +27,18 @@ public class GoodController {
 
     @GetMapping("/list")
     public ApiResponse<PageResponse<GoodSimpleDTO>> getGoodsList(PageQuery pageQuery){
-        return ApiResponse.success(HttpResultCode.OK, goodService.getGoodsList(pageQuery));
+        log.info("getGoodsList - 开始: pageQuery={}", pageQuery);
+        PageResponse<GoodSimpleDTO> result = goodService.getGoodsList(pageQuery);
+        log.info("getGoodsList - 结束: 结果={}", result);
+        return ApiResponse.success(HttpResultCode.OK, result);
     }
 
     @GetMapping("/{id}/detail")
     public ApiResponse<GoodDetailDTO> getGoodDetail(@PathVariable Long id){
-        return ApiResponse.success(HttpResultCode.OK, goodService.getGoodDetail(id));
+        log.info("getGoodDetail - 开始: id={}", id);
+        GoodDetailDTO result = goodService.getGoodDetail(id);
+        log.info("getGoodDetail - 结束: id={}, 结果={}", id, result);
+        return ApiResponse.success(HttpResultCode.OK, result);
     }
 
 }
