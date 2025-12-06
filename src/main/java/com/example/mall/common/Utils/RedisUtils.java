@@ -1,5 +1,6 @@
 package com.example.mall.common.Utils;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -46,4 +47,9 @@ public class RedisUtils {
         redisTemplate.delete(keys);
         log.info("deleteKeys - 结束: 批量删除{}个key完成", keys.size());
     }
+    
+    public void hashPutAll(String key, Map<String, Object> configMap){
+        redisTemplate.opsForHash().putAll(key, configMap);
+    }
+
 }

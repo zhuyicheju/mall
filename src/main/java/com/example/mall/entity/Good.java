@@ -15,7 +15,7 @@ public class Good {
 
     private BigDecimal price;
 
-    private Long stock;
+    private Long stock; 
 
     private String description;
 
@@ -24,4 +24,11 @@ public class Good {
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
+
+    private LocalDateTime seckillStartTime; 
+    private LocalDateTime seckillEndTime;
+    
+    private Integer seckillLimit = 1;
+    
+    private Integer isSeckill = 1;
 }

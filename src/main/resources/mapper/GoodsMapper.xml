@@ -7,7 +7,7 @@
     <select id="getGoodsWithPage" resultType="Good">
         SELECT id, name, price, image_url 
         FROM goods
-        WHERE state = 1 AND stock > 0
+        WHERE stock > 0
         ORDER BY price
         LIMIT #{offset}, #{pagesize}
     </select>

@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example.mall.controller.dto.GoodDetailDTO;
 import com.example.mall.controller.dto.GoodInsertDTO;
 import com.example.mall.controller.dto.GoodSimpleDTO;
-import com.example.mall.entity.Good;
 
 @Mapper
 public interface GoodsMapper {
