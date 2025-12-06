@@ -1,5 +1,7 @@
 package com.example.mall.common.Utils;
 
+import static org.mockito.Mockito.timeout;
+
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -48,8 +50,9 @@ public class RedisUtils {
         log.info("deleteKeys - 结束: 批量删除{}个key完成", keys.size());
     }
     
-    public void hashPutAll(String key, Map<String, Object> configMap){
+    public void hashPutAll(String key, Map<String, Object> configMap, Long timeout, TimeUnit timeUnit){
         redisTemplate.opsForHash().putAll(key, configMap);
+        redisTemplate.expire(key, timeout, timeUnit);
     }
 
 }

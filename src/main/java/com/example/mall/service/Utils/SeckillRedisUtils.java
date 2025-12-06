@@ -50,31 +50,31 @@ public class SeckillRedisUtils {
         return remainingSeconds;
     }
 
-    public void setSeckillStock(Long goodsId, Long stock, LocalDateTime seckillEndTime) {
+    public void setSeckillStock(Long goodsId, Long stock, Long expireTime) {
         String stockKey = buildSeckillStockKey(goodsId);
-        
-        Long expireTime = calcutePreheatExpireTime(seckillEndTime); 
-
-        if(expireTime == 0){
-            log.info("秒杀活动已过期");
-            return;
-        }
 
         redisUtils.set(stockKey, stock, expireTime, TimeUnit.SECONDS);
     }
 
-    public void setSeckillConfig(Long goodsId, LocalDateTime startTime, LocalDateTime endTime, Integer limit) {
+    public void setSeckillConfig(Long goodsId, LocalDateTime startTime, LocalDateTime endTime, Integer limit, Long expireTime) {
         String configKey = buildSeckillConfigKey(goodsId);
 
         Map<String, Object> configMap = new HashMap<>(3);
         configMap.put(SECKILL_CONFIG_FIELD_START_TIME, startTime);
         configMap.put(SECKILL_CONFIG_FIELD_END_TIME, endTime);
         configMap.put(SECKILL_CONFIG_FIELD_LIMIT, limit);
-        redisUtils.hashPutAll(configKey, configMap);
+        redisUtils.hashPutAll(configKey, configMap, expireTime, TimeUnit.SECONDS);
     }
 
     public void preheatSeckillGoods(Long goodsId, Long stock, LocalDateTime startTime, LocalDateTime endTime, Integer limit) {
-        setSeckillStock(goodsId, stock, endTime);
-        setSeckillConfig(goodsId, startTime, endTime, limit);
+        Long expireTime = calcutePreheatExpireTime(endTime); 
+
+        if(expireTime == 0){
+            log.info("秒杀活动已过期");
+            return;
+        }
+    
+        setSeckillStock(goodsId, stock, expireTime);
+        setSeckillConfig(goodsId, startTime, endTime, limit, expireTime);
     }
 }
