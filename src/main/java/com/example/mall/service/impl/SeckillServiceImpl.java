@@ -4,7 +4,7 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.example.mall.mapper.GoodsMapper;
+import com.example.mall.common.Utils.RedisUtils;
 import com.example.mall.mapper.SeckillMapper;
 import com.example.mall.service.SeckillService;
 import com.example.mall.service.DTO.SeckillConfigAndStockDTO;
@@ -22,9 +22,6 @@ public class SeckillServiceImpl implements SeckillService {
 
     @Resource
     private SeckillRedisUtils seckillRedisUtil;
-    // stock key
-    // config key
-    // user has bought key
 
     private final static String REDIS_STOCK_KEY = "seckill:stock:";
     private final static String REDIS_CONFIG_KEY = "seckill:config:";
