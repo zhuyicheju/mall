@@ -115,4 +115,13 @@ public class RedisUtils {
             throw ex;
         }
     }
+
+    public boolean tryLockNoValue(String key, long expireTime, TimeUnit timeUnit){
+        boolean success = redisTemplate.opsForValue().setIfAbsent(key, 1, expireTime, timeUnit);
+        return success;
+    }
+
+    public void releaseLockNoValue(String lockKey) {
+        redisTemplate.delete(lockKey);
+    }
 }

@@ -27,13 +27,15 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class SeckillRedisUtils {
 
-    public static final String SECKILL_STOCK_KEY_PREFIX = "seckill:stock:";
-    public static final String SECKILL_CONFIG_KEY_PREFIX = "seckill:config:";
-    private static final String USER_KEY_PREFIX = "seckill:users:";
+    private static final String SECKILL_STOCK_KEY_PREFIX = "seckill:stock:";
+    private static final String SECKILL_CONFIG_KEY_PREFIX = "seckill:config:";
+    private static final String SECKILL_USER_KEY_PREFIX = "seckill:users:";
+    private static final String SECKILL_LOCK_KEY_PREFIX = "seckill:lock:";
 
-    public static final String SECKILL_CONFIG_FIELD_START_TIME = "startTime";
-    public static final String SECKILL_CONFIG_FIELD_END_TIME = "endTime";
-    public static final String SECKILL_CONFIG_FIELD_LIMIT = "limit";
+
+    private static final String SECKILL_CONFIG_FIELD_START_TIME = "startTime";
+    private static final String SECKILL_CONFIG_FIELD_END_TIME = "endTime";
+    private static final String SECKILL_CONFIG_FIELD_LIMIT = "limit";
 
     @Autowired
     private RedisUtils redisUtils;
@@ -58,25 +60,22 @@ public class SeckillRedisUtils {
         }
     }
 
-    public Integer checkAndReserveStock(Long userId, Long goodId){
-        String stockKey = buildSeckillStockKey(goodId);
-        String userKey = buildSeckillUserKey(goodId);
-        List<String> keys = Arrays.asList(stockKey, userKey);
-        Object[] args = {userId};
-        Integer ret = redisUtils.<Integer>executeLuaBySha(luaSha1, luaScript, keys, args, Integer.class);
-        return ret;
+
+
+    public String buildSeckillUserKey(Long goodId) {
+        return SECKILL_USER_KEY_PREFIX + goodId;
     }
 
-    public String buildSeckillUserKey(Long goodsId) {
-        return USER_KEY_PREFIX + goodsId;
+    private String buildSeckillStockKey(Long goodId) {
+        return SECKILL_STOCK_KEY_PREFIX + goodId;
     }
 
-    private String buildSeckillStockKey(Long goodsId) {
-        return SECKILL_STOCK_KEY_PREFIX + goodsId;
+    private String buildSeckillConfigKey(Long goodId) {
+        return SECKILL_CONFIG_KEY_PREFIX + goodId;
     }
 
-    private String buildSeckillConfigKey(Long goodsId) {
-        return SECKILL_CONFIG_KEY_PREFIX + goodsId;
+    private String buildSeckillLockKey(Long goodId, Long userId){
+        return SECKILL_LOCK_KEY_PREFIX + goodId + ":" + userId;
     }
 
     private long calcutePreheatExpireTime(LocalDateTime seckillEndTime){
@@ -92,14 +91,14 @@ public class SeckillRedisUtils {
         return remainingSeconds;
     }
 
-    public void setSeckillStock(Long goodsId, Long stock, Long expireTime) {
-        String stockKey = buildSeckillStockKey(goodsId);
+    public void setSeckillStock(Long goodId, Long stock, Long expireTime) {
+        String stockKey = buildSeckillStockKey(goodId);
 
         redisUtils.set(stockKey, stock, expireTime, TimeUnit.SECONDS);
     }
 
-    public void setSeckillConfig(Long goodsId, LocalDateTime startTime, LocalDateTime endTime, Integer limit, Long expireTime) {
-        String configKey = buildSeckillConfigKey(goodsId);
+    public void setSeckillConfig(Long goodId, LocalDateTime startTime, LocalDateTime endTime, Integer limit, Long expireTime) {
+        String configKey = buildSeckillConfigKey(goodId);
 
         Map<String, Object> configMap = new HashMap<>(3);
         configMap.put(SECKILL_CONFIG_FIELD_START_TIME, startTime);
@@ -108,7 +107,7 @@ public class SeckillRedisUtils {
         redisUtils.hashPutAll(configKey, configMap, expireTime, TimeUnit.SECONDS);
     }
 
-    public void preheatSeckillGoods(Long goodsId, Long stock, LocalDateTime startTime, LocalDateTime endTime, Integer limit) {
+    public void preheatSeckillGoods(Long goodId, Long stock, LocalDateTime startTime, LocalDateTime endTime, Integer limit) {
         Long expireTime = calcutePreheatExpireTime(endTime); 
 
         if(expireTime == 0){
@@ -116,7 +115,27 @@ public class SeckillRedisUtils {
             return;
         }
     
-        setSeckillStock(goodsId, stock, expireTime);
-        setSeckillConfig(goodsId, startTime, endTime, limit, expireTime);
+        setSeckillStock(goodId, stock, expireTime);
+        setSeckillConfig(goodId, startTime, endTime, limit, expireTime);
+    }
+
+    public Integer checkAndReserveStock(Long userId, Long goodId){
+        String stockKey = buildSeckillStockKey(goodId);
+        String userKey = buildSeckillUserKey(goodId);
+        List<String> keys = Arrays.asList(stockKey, userKey);
+        Object[] args = {userId};
+        Integer ret = redisUtils.<Integer>executeLuaBySha(luaSha1, luaScript, keys, args, Integer.class);
+        return ret;
+    }
+
+    public boolean trySeckillLock(Long goodId,Long userId){
+        String lockKey = buildSeckillLockKey(goodId, userId);
+        boolean success = redisUtils.tryLockNoValue(lockKey, 60, TimeUnit.SECONDS);
+        return success;
+    }
+
+    public void releaseLockSimple(Long goodId,Long userId) {
+        String lockKey = buildSeckillLockKey(goodId, userId);
+        redisUtils.releaseLockNoValue(lockKey);  
     }
 }
