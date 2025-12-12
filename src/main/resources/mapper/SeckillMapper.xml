@@ -15,4 +15,12 @@
         FROM goods
         WHERE isSeckill=1
     </select>
+
+    <insert id="insertSeckillOrder" resultType="SeckillOrderInsertDTO">
+        INSERT INTO `seckill_order` (
+            user_id, good_id
+        ) VALUES (
+            #{user_id}, #{good_id}
+        )
+    </insert>
 </mapper>

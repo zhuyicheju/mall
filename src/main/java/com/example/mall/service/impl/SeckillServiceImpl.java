@@ -2,12 +2,17 @@ package com.example.mall.service.impl;
 
 import java.util.Set;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
+import com.example.mall.common.MallException;
 import com.example.mall.common.Utils.RedisUtils;
+import com.example.mall.common.enums.HttpResultCode;
+import com.example.mall.entity.SeckillOrder;
 import com.example.mall.mapper.SeckillMapper;
 import com.example.mall.service.SeckillService;
 import com.example.mall.service.DTO.SeckillConfigAndStockDTO;
+import com.example.mall.service.DTO.SeckillOrderInsertDTO;
 import com.example.mall.service.Utils.SeckillRedisUtils;
 
 import jakarta.annotation.Resource;
@@ -58,5 +63,15 @@ public class SeckillServiceImpl implements SeckillService {
     public Set<Long> getSeckillGoods(){
         Set<Long> goods = seckillMapper.getSeckillGoods();
         return goods;
+    }
+
+    private void createSeckillOrder(Long userId, Long goodsId) {
+        try {
+            seckillMapper.insertSeckillOrder(new SeckillOrderInsertDTO(userId, goodsId));
+        } catch (DuplicateKeyException e) {
+            // 捕获唯一索引冲突，说明已下单
+            log.warn("用户{}重复购买商品{}", userId, goodsId);
+            throw new MallException(HttpResultCode.BAD_REQUEST,"已参与秒杀，请勿重复提交");
+        }
     }
 }
