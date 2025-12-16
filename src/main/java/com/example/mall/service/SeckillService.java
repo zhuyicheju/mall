@@ -7,4 +7,5 @@ public interface SeckillService {
     public void preheatGoods(Set<Long> id);
     public void preheatAllSeckillGoods();
     public Set<Long> getSeckillGoods();
+    public void doSeckill(Long userId, Long goodId);
 }
