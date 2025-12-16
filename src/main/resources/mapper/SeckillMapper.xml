@@ -23,4 +23,12 @@
             #{user_id}, #{good_id}
         )
     </insert>
+
+    <select id="countByUserAndGood"
+            resultType="int">
+        SELECT COUNT(1)
+        FROM seckill_order
+        WHERE user_id = #{userId}
+        AND good_id = #{goodId}
+    </select>
 </mapper>

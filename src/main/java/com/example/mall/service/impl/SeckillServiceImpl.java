@@ -1,5 +1,6 @@
 package com.example.mall.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.springframework.dao.DuplicateKeyException;
@@ -10,6 +11,7 @@ import com.example.mall.common.Utils.RedisUtils;
 import com.example.mall.common.enums.HttpResultCode;
 import com.example.mall.entity.SeckillOrder;
 import com.example.mall.mapper.SeckillMapper;
+import com.example.mall.service.OrderProducer;
 import com.example.mall.service.SeckillService;
 import com.example.mall.service.DTO.SeckillConfigAndStockDTO;
 import com.example.mall.service.DTO.SeckillOrderInsertDTO;
@@ -28,10 +30,32 @@ public class SeckillServiceImpl implements SeckillService {
     @Resource
     private SeckillRedisUtils seckillRedisUtil;
 
+    @Resource
+    private OrderProducer orderProducer;
+
     private final static String REDIS_STOCK_KEY = "seckill:stock:";
     private final static String REDIS_CONFIG_KEY = "seckill:config:";
 
     private final static Integer NOT_IN_SECKILL = 0;
+
+    public void doSeckill(Long userId, Long goodId){
+        if (!seckillRedisUtil.trySeckillLock(goodId, userId)){
+            throw new MallException(HttpResultCode.BAD_REQUEST, "请勿多次发送请求");
+        }
+        Integer ret = seckillRedisUtil.checkAndReserveStock(userId, goodId);
+        switch (ret) {
+            case 0:
+                throw new MallException(HttpResultCode.BAD_REQUEST, "库存不足");
+            case 1:
+                log.info("成功lua原子扣减");
+                break;
+            case 2:
+                throw new MallException(HttpResultCode.BAD_REQUEST, "重复下单");
+            default:
+                throw new MallException(HttpResultCode.BAD_REQUEST, "未知错误");
+        }
+        orderProducer.send(userId, goodId);
+    }
 
     public void preheatGood(Long id){
         String redisStockKey = REDIS_STOCK_KEY + id;
@@ -42,10 +66,12 @@ public class SeckillServiceImpl implements SeckillService {
             return;
         }
 
-        seckillRedisUtil.preheatSeckillGoods(id, seckillConfigAndStockDTO.getStock(),
-                                                 seckillConfigAndStockDTO.getSeckillStartTime(),
-                                                 seckillConfigAndStockDTO.getSeckillEndTime(),
-                                                 seckillConfigAndStockDTO.getSeckillLimit());
+        Long stock = seckillConfigAndStockDTO.getStock();
+        LocalDateTime startTime = seckillConfigAndStockDTO.getSeckillStartTime();
+        LocalDateTime endTime = seckillConfigAndStockDTO.getSeckillEndTime();
+        Integer limit = seckillConfigAndStockDTO.getSeckillLimit();
+
+        seckillRedisUtil.preheatSeckillGoods(id, stock, startTime, endTime, limit);
         
     }
 
